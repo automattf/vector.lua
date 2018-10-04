@@ -1,16 +1,44 @@
+--[[
+MIT License
+
+Copyright (c) 2018 Matthew Francis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]
+
 local vector = {}
 vector.__index = vector
+
+local rand = math.random
+if love and love.math then rand = love.math.random end
 
 local function new(x,y)
   return setmetatable({x=x or 0, y=y or 0}, vector)
 end
 
-local function random()
-  return new(math.random(), math.random())
-end
 
 local function fromAngle(theta)
-  return new(math.cos(theta), math.sin(theta))
+  return new(math.cos(theta), -math.sin(theta))
+end
+
+local function random()
+  return fromAngle(rand() * math.pi*2)
 end
 
 local function isvector(t)
@@ -19,6 +47,10 @@ end
 
 function vector:set(x,y)
   self.x, self.y = x or self.x, y or self.y
+end
+
+function vector:replace(v)
+  self.x, self.y = v.x, v.y
 end
 
 function vector:clone()
@@ -37,6 +69,10 @@ function vector:setmag(mag)
   self:norm()
   local v = self * mag
   self:set(v.x,v.y)
+end
+
+function vector.__unm(v)
+	return new(-v.x, -v.y)
 end
 
 function vector.__add(a,b)
@@ -84,14 +120,10 @@ function vector:dot(v)
   return self.x * v.x + self.y * v.y
 end
 
-function vector:cross()
-  
-end
-
 function vector:norm()
-  local m = self:getMag()
+  local m = self:getmag()
   if m~=0 then
-    self:div(m)
+    self:replace(self / m)
   end
 end
 
@@ -104,15 +136,21 @@ function vector:limit(max)
 end
 
 function vector:heading()
-  return math.atan2(self.y, self.x)
+  return -math.atan2(self.y, self.x)
 end
 
 function vector:rotate(theta)
-  return fromAngle(self:heading() + theta)
+  local m = self:getmag()
+  self:replace(fromAngle(self:heading() + theta))
+  self:setmag(m)
 end
 
 function vector:array()
   return {self.x, self.y}
+end
+
+function vector:unpack()
+  return self.x, self.y
 end
 
 return setmetatable({

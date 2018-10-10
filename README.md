@@ -65,7 +65,7 @@ Limits the magnitude of the `Vector`. If it's current magnitude is greater than 
 Returns the angle of rotation of the `Vector`.
 
 #### Vector:rotate(theta)
-Rotates the `Vector` by `theta`, which in radians.
+Rotates the `Vector` by `theta`, which is in radians.
 
 #### Vector:array()
 Returns an array version of the vector. For example, `vector(50, 60):unpack()` would return `{50, 60}`

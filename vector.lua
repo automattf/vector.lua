@@ -45,10 +45,12 @@ end
 
 function vector:set(x,y)
   self.x, self.y = x or self.x, y or self.y
+  return self
 end
 
 function vector:replace(v)
   self.x, self.y = v.x, v.y
+  return self
 end
 
 function vector:clone()
@@ -67,6 +69,7 @@ function vector:setmag(mag)
   self:norm()
   local v = self * mag
   self:replace(v)
+  return self
 end
 
 function vector.__unm(v)
@@ -123,6 +126,7 @@ function vector:norm()
   if m~=0 then
     self:replace(self / m)
   end
+  return self
 end
 
 function vector:limit(max)
@@ -131,6 +135,7 @@ function vector:limit(max)
   if mSq > max^2 then
     self:setmag(max)
   end
+  return self
 end
 
 function vector:heading()
@@ -141,6 +146,7 @@ function vector:rotate(theta)
   local m = self:getmag()
   self:replace(fromAngle(self:heading() + theta))
   self:setmag(m)
+  return self
 end
 
 function vector:array()

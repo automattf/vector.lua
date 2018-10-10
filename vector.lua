@@ -66,7 +66,7 @@ end
 function vector:setmag(mag)
   self:norm()
   local v = self * mag
-  self:set(v.x,v.y)
+  self:replace(v)
 end
 
 function vector.__unm(v)
@@ -110,7 +110,7 @@ end
 
 function vector.dist(a,b)
   assert(isvector(a) and isvector(b), "dist: wrong argument types (expected <vector> and <vector>)")
-  return math.sqrt((v.x-self.x)^2 + (v.y-self.y)^2)
+  return math.sqrt((a.x-b.x)^2 + (a.y-b.y)^2)
 end
 
 function vector:dot(v)

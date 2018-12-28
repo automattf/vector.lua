@@ -1,24 +1,29 @@
---[[
-Copyright (c) 2018 themousery
+local module = {
+  _version = "vector.lua v0.0.1",
+  _description = "a simple vector library for Lua based on the PVector class from processing",
+  _url = "https://github.com/themousery/vector.lua",
+  _license = [[
+    Copyright (c) 2018 themousery
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-]]
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+  ]]
+}
 
 local vector = {}
 vector.__index = vector
@@ -44,11 +49,13 @@ local function isvector(t)
 end
 
 function vector:set(x,y)
+  if isvector(x) then self.x, self.y = x.x, x.y;return end
   self.x, self.y = x or self.x, y or self.y
   return self
 end
 
 function vector:replace(v)
+  assert(isvector(v), "replace: wrong argument type: (expected <vector>, got "..type(v)..")")
   self.x, self.y = v.x, v.y
   return self
 end
@@ -73,7 +80,7 @@ function vector:setmag(mag)
 end
 
 function vector.__unm(v)
-	return new(-v.x, -v.y)
+  return new(-v.x, -v.y)
 end
 
 function vector.__add(a,b)
@@ -157,12 +164,9 @@ function vector:unpack()
   return self.x, self.y
 end
 
-return setmetatable({
-  new = new,
-  random = random,
-  fromAngle = fromAngle,
-  isvector = isvector
-},
-{
-  __call = function(_,...) return new(...) end
-})
+
+module.new = new
+module.random = random
+module.fromAngle = fromAngle
+module.isvector = isvector
+return setmetatable(module, {__call = function(_,...) return new(...) end})

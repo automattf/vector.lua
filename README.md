@@ -26,7 +26,7 @@ print(v) -- will print "(100, 100)"
 Returns a new `Vector` object with the given x and y values, or 0 if not given. You can also simply call `vector()`, that being whatever you've chosen to name the module.
 
 #### vector.random()
-Similar to `vector.new`, but returns a `Vector` with random values for x and y.
+Similar to `vector.new`, but returns a `Vector` which is pointing in a random direction.
 
 #### vector.fromAngle(theta)
 Creates a new `Vector` from an angle in radians. _Note: the y value of the vector is flipped from normal, since this library is specifically geared toward game development. Feel free to remove the `-` in `fromAngle` if you need to._

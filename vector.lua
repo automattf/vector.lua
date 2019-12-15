@@ -1,5 +1,5 @@
 local module = {
-  _version = "vector.lua v0.0.1",
+  _version = "vector.lua v2019.14.12",
   _description = "a simple vector library for Lua based on the PVector class from processing",
   _url = "https://github.com/themousery/vector.lua",
   _license = [[
@@ -175,7 +175,7 @@ function vector:clamp(min, max)
   assert(isvector(min) and isvector(max), "clamp: wrong argument type (expected <vector>) and <vector>")
   local x = math.min( math.max( self.x, min.x ), max.x )
   local y = math.min( math.max( self.y, min.y ), max.y )
-  self:replace(new(x, y))
+  self:set(x,y)
   return self
 end
 

@@ -170,6 +170,15 @@ function vector:limit(max)
   return self
 end
 
+-- Clamp each axis between max and min's corresponding axis
+function vector:clamp(min, max)
+  assert(isvector(min) and isvector(max), "clamp: wrong argument type (expected <vector>) and <vector>")
+  local x = math.min( math.max( self.x, min.x ), max.x )
+  local y = math.min( math.max( self.y, min.y ), max.y )
+  self:replace(new(x, y))
+  return self
+end
+
 -- get the heading (direction) of a vector
 function vector:heading()
   return -math.atan2(self.y, self.x)

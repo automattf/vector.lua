@@ -184,11 +184,14 @@ function vector:heading()
   return -math.atan2(self.y, self.x)
 end
 
--- rotate a vector by a certain number of degrees
+-- rotate a vector clockwise by a certain number of radians
 function vector:rotate(theta)
-  local m = self:getmag()
-  self:replace(fromAngle(self:heading() + theta))
-  self:setmag(m)
+  local s = math.sin(theta)
+  local c = math.cos(theta)
+  local v = new(
+                (c * self.x) + (s * self.y),
+                -(s * self.x) + (c * self.y))
+  self:replace(v)
   return self
 end
 

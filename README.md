@@ -1,4 +1,4 @@
-# themousery's 2D vector library
+# a 2D vector library
 
 This library was made by me because I wasn't happy with other vector libraries for Lua. Functions largely based on the [PVector class from Processing](https://processing.org/reference/PVector.html), and the code syntax was helped by reference to [HUMP's Vector class](https://github.com/vrld/hump). 
 

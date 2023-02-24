@@ -84,6 +84,7 @@ end
 
 -- set the magnitude of a vector
 function vector:setmag(mag)
+  assert(self:getmag() ~= 0, "Cannot set magnitude when direction is ambiguous")
   self:norm()
   local v = self * mag
   self:replace(v)

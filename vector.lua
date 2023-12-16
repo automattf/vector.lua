@@ -1,3 +1,6 @@
+
+---@class vector.lua
+---@overload fun(x: number?, y: number): Vector.lua
 local module = {
   _version = "vector.lua v2019.14.12",
   _description = "a simple vector library for Lua based on the PVector class from processing",
@@ -26,6 +29,12 @@ local module = {
 }
 
 -- create the module
+---@class Vector.lua
+---@operator add: Vector.lua
+---@operator sub: Vector.lua
+---@operator mul: Vector.lua
+---@operator div: Vector.lua
+---@operator unm: Vector.lua
 local vector = {}
 vector.__index = vector
 
@@ -33,56 +42,75 @@ vector.__index = vector
 local rand = math.random
 if love and love.math then rand = love.math.random end
 
--- makes a new vector
+--- makes a new vector
+---@param x number?
+---@param y number?
+---@return Vector.lua
 local function new(x,y)
   return setmetatable({x=x or 0, y=y or 0}, vector)
 end
 
--- makes a new vector from an angle
+--- makes a new vector from an angle
+---@param theta number
+---@return Vector.lua
 local function fromAngle(theta)
   return new(math.cos(theta), -math.sin(theta))
 end
 
--- makes a vector with a random direction
+--- makes a vector with a random direction
+---@return Vector.lua
 local function random()
   return fromAngle(rand() * math.pi*2)
 end
 
--- check if an object is a vector
+--- check if an object is a vector
+---@param t any
+---@return boolean
 local function isvector(t)
   return getmetatable(t) == vector
 end
 
--- set the values of the vector to something new
+--- set the values of the vector to something new
+---@param x number
+---@param y number
+---@overload fun(self: Vector.lua, vec: Vector.lua): self
+---@return self
 function vector:set(x,y)
-  if isvector(x) then self.x, self.y = x.x, x.y;return end
+---@diagnostic disable-next-line: undefined-field
+  if isvector(x) then self.x, self.y = x.x, x.y; return self end
   self.x, self.y = x or self.x, y or self.y
   return self
 end
 
--- replace the values of a vector with the values of another vector
+--- replace the values of a vector with the values of another vector
+---@param v Vector.lua
+---@return self
 function vector:replace(v)
   assert(isvector(v), "replace: wrong argument type: (expected <vector>, got "..type(v)..")")
   self.x, self.y = v.x, v.y
   return self
 end
 
--- returns a copy of a vector
+--- returns a copy of a vector
+---@return Vector.lua
 function vector:clone()
   return new(self.x, self.y)
 end
 
--- get the magnitude of a vector
+--- get the magnitude of a vector
+---@return number
 function vector:getmag()
   return math.sqrt(self.x^2 + self.y^2)
 end
 
--- get the magnitude squared of a vector
+--- get the magnitude squared of a vector
+---@return number
 function vector:magSq()
   return self.x^2 + self.y^2
 end
 
--- set the magnitude of a vector
+--- set the magnitude of a vector
+---@return self
 function vector:setmag(mag)
   assert(self:getmag() ~= 0, "Cannot set magnitude when direction is ambiguous")
   self:norm()
@@ -91,28 +119,39 @@ function vector:setmag(mag)
   return self
 end
 
--- meta function to make vectors negative
--- ex: (negative) -vector(5,6) is the same as vector(-5,-6)
+--- meta function to make vectors negative
+--- ex: (negative) -vector(5,6) is the same as vector(-5,-6)
+---@param v Vector.lua
+---@return Vector.lua
 function vector.__unm(v)
   return new(-v.x, -v.y)
 end
 
--- meta function to add vectors together
--- ex: (vector(5,6) + vector(6,5)) is the same as vector(11,11)
+--- meta function to add vectors together
+--- ex: (vector(5,6) + vector(6,5)) is the same as vector(11,11)
+---@param a Vector.lua
+---@param b Vector.lua
+---@return Vector.lua
 function vector.__add(a,b)
   assert(isvector(a) and isvector(b), "add: wrong argument types: (expected <vector> and <vector>)")
   return new(a.x+b.x, a.y+b.y)
 end
 
--- meta function to subtract vectors
+--- meta function to subtract vectors
+---@param a Vector.lua
+---@param b Vector.lua
+---@return Vector.lua
 function vector.__sub(a,b)
   assert(isvector(a) and isvector(b), "sub: wrong argument types: (expected <vector> and <vector>)")
   return new(a.x-b.x, a.y-b.y)
 end
 
--- meta function to multiply vectors
+--- meta function to multiply vectors
+---@param a Vector.lua | number
+---@param b Vector.lua | number
+---@return Vector.lua
 function vector.__mul(a,b)
-  if type(a) == 'number' then 
+  if type(a) == 'number' then
     return new(a * b.x, a * b.y)
   elseif type(b) == 'number' then
     return new(a.x * b, a.y * b)
@@ -122,37 +161,50 @@ function vector.__mul(a,b)
   end
 end
 
--- meta function to divide vectors
+--- meta function to divide vectors
+---@param a Vector.lua | number
+---@param b Vector.lua | number
+---@return Vector.lua
 function vector.__div(a,b)
   assert(isvector(a) and type(b) == "number", "div: wrong argument types (expected <vector> and <number>)")
   return new(a.x/b, a.y/b)
 end
 
--- meta function to check if vectors have the same values
+--- meta function to check if vectors have the same values
+---@param a Vector.lua
+---@param b Vector.lua
+---@return boolean
 function vector.__eq(a,b)
   assert(isvector(a) and isvector(b), "eq: wrong argument types (expected <vector> and <vector>)")
   return a.x==b.x and a.y==b.y
 end
 
--- meta function to change how vectors appear as string
--- ex: print(vector(2,8)) - this prints '(2,8)'
+--- meta function to change how vectors appear as string
+--- ex: print(vector(2,8)) - this prints '(2,8)'
+---@return string
 function vector:__tostring()
   return "("..self.x..", "..self.y..")"
 end
 
--- get the distance between two vectors
+--- get the distance between two vectors
+---@param a Vector.lua
+---@param b Vector.lua
+---@return number
 function vector.dist(a,b)
   assert(isvector(a) and isvector(b), "dist: wrong argument types (expected <vector> and <vector>)")
   return math.sqrt((a.x-b.x)^2 + (a.y-b.y)^2)
 end
 
--- return the dot product of the vector
+--- return the dot product of the vector
+---@param v Vector.lua
+---@return number
 function vector:dot(v)
   assert(isvector(v), "dot: wrong argument type (expected <vector>)")
   return self.x * v.x + self.y * v.y
 end
 
--- normalize the vector (give it a magnitude of 1)
+--- normalize the vector (give it a magnitude of 1)
+---@return Vector.lua
 function vector:norm()
   local m = self:getmag()
   if m~=0 then
@@ -161,7 +213,9 @@ function vector:norm()
   return self
 end
 
--- limit the vector to a certain amount
+--- limit the vector to a certain amount
+---@param max number
+---@return Vector.lua
 function vector:limit(max)
   assert(type(max) == 'number', "limit: wrong argument type (expected <number>)")
   local mSq = self:magSq()
@@ -171,7 +225,10 @@ function vector:limit(max)
   return self
 end
 
--- Clamp each axis between max and min's corresponding axis
+--- Clamp each axis between max and min's corresponding axis
+---@param min Vector.lua
+---@param max Vector.lua
+---@return Vector.lua
 function vector:clamp(min, max)
   assert(isvector(min) and isvector(max), "clamp: wrong argument type (expected <vector>) and <vector>")
   local x = math.min( math.max( self.x, min.x ), max.x )
@@ -180,12 +237,15 @@ function vector:clamp(min, max)
   return self
 end
 
--- get the heading (direction) of a vector
+--- get the heading (direction) of a vector
+---@return number
 function vector:heading()
   return -math.atan2(self.y, self.x)
 end
 
--- rotate a vector clockwise by a certain number of radians
+--- rotate a vector clockwise by a certain number of radians
+---@param theta number
+---@return Vector.lua
 function vector:rotate(theta)
   local s = math.sin(theta)
   local c = math.cos(theta)
@@ -196,12 +256,14 @@ function vector:rotate(theta)
   return self
 end
 
--- return x and y of vector as a regular array
+--- return x and y of vector as a regular array
+---@return { [1]: number, [2]: number }
 function vector:array()
   return {self.x, self.y}
 end
 
 -- return x and y of vector, unpacked from table
+---@return number, number
 function vector:unpack()
   return self.x, self.y
 end
@@ -212,4 +274,4 @@ module.new = new
 module.random = random
 module.fromAngle = fromAngle
 module.isvector = isvector
-return setmetatable(module, {__call = function(_,...) return new(...) end})
+return setmetatable(module --[[@as table]], {__call = function(_,...) return new(...) end}) --[[@as vector.lua]]

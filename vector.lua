@@ -71,8 +71,8 @@ local function isvector(t)
 end
 
 --- set the values of the vector to something new
----@param x number
----@param y number
+---@param x number | nil
+---@param y number | nil
 ---@overload fun(self: Vector.lua, vec: Vector.lua): self
 ---@return self
 function vector:set(x,y)

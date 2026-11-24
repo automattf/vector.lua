@@ -68,7 +68,7 @@ Returns the angle of rotation of the `Vector`.
 Rotates the `Vector` by `theta`, which is in radians.
 
 #### Vector:array()
-Returns an array version of the vector. For example, `vector(50, 60):unpack()` would return `{50, 60}`
+Returns an array version of the vector. For example, `vector(50, 60):array()` would return `{50, 60}`
 
 #### Vector:unpack()
 Returns both the x and y values unpacked. Useful for function arguments. For example, `vector(50,60):unpack()` would return `50, 60`
